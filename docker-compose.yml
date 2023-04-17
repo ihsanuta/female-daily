@@ -1,0 +1,41 @@
+version: '3'
+services:
+  app:
+    container_name: app_female_daily
+    build: .
+    ports:
+      - 8080:8080
+    restart: on-failure
+    volumes:
+      - api:/usr/src/app/
+    depends_on:
+      - mysql
+    networks:
+      - fullstack
+  mysql:
+    image: mysql:5.7
+    container_name: mysql_female_daily
+    ports:
+      - 3306:3306
+    environment:
+      # - MYSQL_ROOT_HOST=${DB_HOST}
+      # - MYSQL_USER=${DB_USER}
+      # - MYSQL_PASSWORD=${DB_PASS}
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_ROOT_PASSWORD=${DB_PASS}
+      # - MYSQL_DRIVER=${DB_DRIVER}
+    volumes:
+      - db:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - fullstack
+
+volumes:
+  api:
+  db:
+    driver: local
+
+# Networks to be created to facilitate communication between containers
+networks:
+  fullstack:
+    driver: bridge
